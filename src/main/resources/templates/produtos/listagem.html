@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio Oak - Cadastro e Listagem de Produtos</title>
+    <!--Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!--Bootstrap Icons-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!--Javascript do Bootstrap-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
+    <!--Font Awesome-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="shortcut icon" th:href="@{img/favicon.ico}" type="image/x-icon">
+</head>
+
+<body>
+    <header th:replace="~{fragments/header::header}"></header>
+    <main>
+        <section class="container mb-5">
+            <div class="row">
+                <h2 class="m-4" style="text-align: start;">Listagem de Produtos</h2>
+                <div class="actions-row d-flex justify-content-between align-items-center px-0">
+                    <form th:action="@{/admin/produtos/search}" method="get" class="col-5 search-form">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="nome" placeholder="Pesquise por nome">
+                            <button class="btn btn-primary input-group-text" type="submit"><i class="bi bi-search"></i></button>
+                        </div>
+                    </form>
+                    <div class="export-row d-flex">
+                        <a th:href="@{/admin/produtos/pdf}" class="btn btn-danger btn-export d-flex align-items-center">Exportar para PDF <i class="bi bi-box-arrow-in-up export-icon"></i></a>
+                        <a th:href="@{/admin/produtos/csv}" class="btn btn-secondary btn-export d-flex align-items-center">Exportar para CSV <i class="bi bi-box-arrow-in-up export-icon"></i></a>
+                        <a th:href="@{/admin/produtos/excel/export}" class="btn btn-success btn-export d-flex align-items-center">Exportar para Excel <i class="bi bi-box-arrow-in-up export-icon"></i></a>
+                    </div>
+                </div>
+                <table class="table table-hover table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col" style="width: 10%;">
+                                <a th:href="@{/admin/produtos/paginated(page=${currentPage},sort=id,sortDirection=${reverseSortDirection})}">Id</a>
+                            </th>
+                            <th scope="col" style="width: 25%;">
+                                <a th:href="@{/admin/produtos/paginated(page=${currentPage},sort=nome,sortDirection=${reverseSortDirection})}">Nome</a>
+                            </th>
+                            <th scope="col" style="width: 30%;">
+                                <a th:href="@{/admin/produtos/paginated(page=${currentPage},sort=descricao,sortDirection=${reverseSortDirection})}">Descrição</a>
+                            </th>
+                            <th scope="col" style="width: 10%;">
+                                <!-- <a th:href="@{/produtos/order(valor='desc')}" class="order-value-btn me-2" 
+                                    title="Ordenar por preço de forma decrescente">
+                                    <i class="bi bi-sort-down-alt order-value-desc-icon"></i>
+                                </a> -->
+                                <a th:href="@{/admin/produtos/paginated(page=${currentPage},sort=valor,sortDirection=${reverseSortDirection})}">Valor</a>
+                                <!-- <a th:href="@{/produtos/order(valor='asc')}" class="order-value-btn ms-2" 
+                                    title="Ordenar por preço de forma crescente">
+                                    <i class="bi bi-sort-down order-value-asc-icon"></i>
+                                </a> -->
+                            </th>
+                            <th scope="col" style="width: 10%;">
+                                <a th:href="@{/admin/produtos/paginated(page=${currentPage},sort=disponivel,sortDirection=${reverseSortDirection})}">Disponível</a>
+                            </th>
+                            <th scope="col" style="width: 15%;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="produto : ${produtos}">
+                            <th th:text="${produto.id}" scope="row"></th>
+                            <td th:text="${produto.nome}"></td>
+                            <td th:text="${produto.descricao}"></td>
+                            <td th:text="'R$' + ${produto.valor}"></td>
+                            <td class="position-relative">
+                                <i th:if="${produto.disponivel}" class="bi bi-check2-square green-icon"></i>
+                                <i th:if="!${produto.disponivel}" class="bi bi-x-square red-icon"></i>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary" th:href="@{/admin/produtos/{id}/atualizar(id=${produto.id})}">Editar</a>
+                                <button type="button" class="btn btn-danger"
+                                    th:attr="data-bs-toggle='modal', data-bs-target=${'#delete-confirmation-'.concat(produto.id)}">
+                                    Deletar
+                                </button>
+                                <div class="modal fade" th:attr="id=${'delete-confirmation-'.concat(produto.id)}" tabindex="-1"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Você tem certeza disso?</h5>
+                                                <button type="button" class="btn-close"
+                                                    data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <h6 class="mt-3">Esta ação <strong>não pode</strong> ser desfeita</h6>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a th:href="@{/admin/produtos/{id}/deletar(id=${produto.id})}"
+                                                    class="btn btn-danger">Sim</a>
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Não</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pagination-div d-flex flex-column align-items-center">
+                    <p th:text="'Listando ' + ${totalPageItems} + ' de ' + ${totalItems} + ' itens | Página ' + ${currentPage} + ' de ' + ${totalPages}"></p>
+
+                    <nav>
+                        <ul class="pagination">
+
+                            <li th:class="${currentPage > 1} ? 'page-item' : 'page-item disabled'">
+                                <a th:href="@{/admin/produtos/paginated(page=1,sort=${sort},sortDirection=${sortDirection})}" class="page-link">Primeira</a>
+                            </li>
+                            <li th:class="${currentPage > 1} ? 'page-item' : 'page-item disabled'">
+                                <a th:href="@{/admin/produtos/paginated(page=${currentPage - 1},sort=${sort},sortDirection=${sortDirection})}" class="page-link"><</a>
+                            </li>
+
+                            <th:block th:if="${totalPages <= 10}">
+                                <li th:each="i : ${#numbers.sequence(1,totalPages)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                                    <a th:href="@{/admin/produtos/paginated(page=${i},sort=${sort},sortDirection=${sortDirection})}" class="page-link" th:text="${i}"></a>
+                                </li>
+                            </th:block>
+
+                            <th:block th:if="${totalPages > 10}">
+
+                                <th:block th:if="${currentPage <= 5 || currentPage >= totalPages - 4}">
+                                    <li th:each="i : ${#numbers.sequence(1,5)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                                        <a th:href="@{/admin/produtos/paginated(page=${i},sort=${sort},sortDirection=${sortDirection})}" class="page-link" th:text="${i}"></a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a th:href="@{/admin/produtos/paginated(page=6,sort=${sort},sortDirection=${sortDirection})}" class="page-link">...</a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(totalPages - 4,totalPages)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                                        <a th:href="@{/admin/produtos/paginated(page=${i},sort=${sort},sortDirection=${sortDirection})}" class="page-link" th:text="${i}"></a>
+                                    </li>
+                                </th:block>
+
+                                <th:block th:if="${currentPage > 5 && currentPage < totalPages - 4}">
+                                    <li class="page-item">
+                                        <a th:href="@{/admin/produtos/paginated(page=${currentPage - 5},sort=${sort},sortDirection=${sortDirection})}" class="page-link">...</a>
+                                    </li>
+                                    <li th:each="i : ${#numbers.sequence(currentPage - 4,currentPage + 4)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                                        <a th:href="@{/admin/produtos/paginated(page=${i},sort=${sort},sortDirection=${sortDirection})}" class="page-link" th:text="${i}"></a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a th:href="@{/admin/produtos/paginated(page=${currentPage + 5},sort=${sort},sortDirection=${sortDirection})}" class="page-link">...</a>
+                                    </li>
+                                </th:block>
+                                
+                            </th:block>
+
+                            <li th:class="${currentPage < totalPages} ? 'page-item' : 'page-item disabled'">
+                                <a th:href="@{/admin/produtos/paginated(page=${currentPage + 1},sort=${sort},sortDirection=${sortDirection})}" class="page-link">></a>
+                            </li>
+                            <li th:class="${currentPage < totalPages} ? 'page-item' : 'page-item disabled'">
+                                <a th:href="@{/admin/produtos/paginated(page=${totalPages},sort=${sort},sortDirection=${sortDirection})}" class="page-link">Última</a>
+                            </li>
+                            
+                        </ul>
+                    </nav>
+                </div>
+
+                <form th:action="@{/admin/produtos/excel/import}" method="post" class="col-4 ps-0" enctype="multipart/form-data" onsubmit="return validaEnvioArquivoExcel()">
+                    <label for="excel-file" class="form-label">Importar arquivo Excel</label>
+                    <div class="input-group">
+                        <input id="excel-file" name="file" accept=".xlsx" type="file" class="form-control btn-export">
+                        <button class="btn btn-success input-group-text" type="submit"><i class="bi bi-box-arrow-in-down"></i></button>
+                    </div>
+                    <p class="file-excel-error text-danger my-2 d-none">Por favor, selecione um arquivo</p>
+                </form>
+
+                <form th:action="@{/admin/produtos/csv/import}" method="post" class="col-4 ps-0" enctype="multipart/form-data" onsubmit="return validaEnvioArquivoCsv()">
+                    <label for="csv-file" class="form-label">Importar arquivo CSV</label>
+                    <div class="input-group">
+                        <input id="csv-file" name="file" accept=".csv" type="file" class="form-control btn-export d-flex align-items-center">
+                        <button class="btn btn-secondary input-group-text" type="submit"><i class="bi bi-box-arrow-in-down"></i></button>
+                    </div>
+                    <p class="file-csv-error text-danger my-2 d-none">Por favor, selecione um arquivo</p>
+                </form>
+
+            </div>
+        </section>
+    </main>
+    <script>
+        function validaEnvioArquivoExcel(){
+            const excelFileInput = document.querySelector("#excel-file");
+            const excelFileErrorMessage = document.querySelector(".file-excel-error");
+
+            if (!excelFileInput.value) {
+                excelFileErrorMessage.classList.remove("d-none");
+                return false;
+            }
+            excelFileErrorMessage.classList.add("d-none");
+            return true;
+        }
+        function validaEnvioArquivoCsv(){
+            const csvFileInput = document.querySelector("#csv-file");
+            const csvFileErrorMessage = document.querySelector(".file-csv-error");
+
+            if (!csvFileInput.value) {
+                csvFileErrorMessage.classList.remove("d-none");
+                return false;
+            }
+            csvFileErrorMessage.classList.add("d-none");
+            return true;
+        }
+    </script>
+</body>
+</html>

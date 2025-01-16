@@ -1,0 +1,87 @@
+*
+    padding: 0
+    margin: 0
+    vertical-align: baseline
+    box-sizing: border-box
+    list-style: none
+    text-decoration: none
+
+a
+    text-decoration: none
+
+$primary-header-bg-color: rgb(133, 71, 70)
+
+header
+    .navbar
+        background-color: $primary-header-bg-color
+        &-brand
+            color: #FFF
+            display: flex
+            align-items: center
+            font-size: 1.35rem
+            font-weight: 600
+            &:hover
+                color: #FFF
+            img
+                width: 2.825rem
+                height: 2.825rem
+        &-collapse
+            flex-grow: unset
+        .nav-item
+            a
+                color: #FFF
+                font-size: 1.2rem
+                font-weight: 600
+
+.form-title
+    text-align: center
+
+.gray-bg-form
+    box-shadow: .5px 10px 10px rgba(0,0,0,.2)
+    border: 1px solid #ebebeb
+    border-radius: 10px
+    padding: 1.5rem
+    background-color: #ebebeb
+    input[type="radio"]
+        cursor: pointer
+
+.search-form
+    .form-control:focus
+        box-shadow: none
+        border-color: #000
+    .input-group button
+        border-top-left-radius: 0
+        border-bottom-left-radius: 0
+
+.green-icon
+    color: green
+
+.red-icon
+    color: red
+
+.green-icon, .red-icon
+    position: absolute
+    left: 3rem
+    top: .8rem
+    text-align: center
+    font-size: 1.675rem
+
+.order-value-asc-icon,
+.order-value-desc-icon
+    cursor: pointer
+    color: #fff
+    font-size: 1.2rem
+
+.actions-row
+    margin-bottom: .75rem    
+.import-row,.export-row
+        gap: .75rem
+.btn-export
+    gap: .6rem
+.export-icon
+    font-size: 1.5rem
+
+th
+    a
+        text-decoration: none
+        color: white
