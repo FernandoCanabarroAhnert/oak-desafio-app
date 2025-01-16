@@ -31,6 +31,11 @@ jobs:
       working-directory: ./
       run: mvn clean package
 
+    - name: Docker Compose up
+      run: |
+        cd docker
+        docker compose up
+
     - name: Docker Compose Build
       working-directory: ./docker
       run: docker compose build
