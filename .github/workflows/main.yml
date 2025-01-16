@@ -27,14 +27,14 @@ jobs:
          distribution: 'corretto'
          cache: maven
 
-    - name: Build Application Jar
-      working-directory: ./
-      run: mvn clean package
-
     - name: Docker Compose up
       run: |
         cd docker
         docker compose up
+
+    - name: Build Application Jar
+      working-directory: ./
+      run: mvn clean package
 
     - name: Docker Compose Build
       working-directory: ./docker
