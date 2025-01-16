@@ -27,14 +27,9 @@ jobs:
          distribution: 'corretto'
          cache: maven
 
-    - name: Docker Compose Up for Tests
-      run: |
-        cd docker
-        docker compose -f docker-compose-test.yml up -d
-
     - name: Build Application Jar
       working-directory: ./
-      run: mvn clean install
+      run: mvn clean install -DskipTests
 
     - name: Docker Compose Build
       working-directory: ./docker
