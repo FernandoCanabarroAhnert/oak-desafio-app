@@ -30,7 +30,7 @@ jobs:
     - name: Docker Compose up
       run: |
         cd docker
-        docker compose up -d --build
+        docker compose up -d
 
     - name: Build Application Jar
       working-directory: ./
