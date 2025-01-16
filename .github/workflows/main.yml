@@ -30,11 +30,11 @@ jobs:
     - name: Docker Compose up
       run: |
         cd docker
-        docker compose up -d
+        docker compose up
 
     - name: Build Application Jar
       working-directory: ./
-      run: mvn clean package
+      run: mvn clean install
 
     - name: Docker Compose Build
       working-directory: ./docker
