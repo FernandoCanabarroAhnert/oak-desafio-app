@@ -39,7 +39,9 @@ jobs:
         secrets: |
           "SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}"  
         push: false
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:latest ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:${{ github.run_id }}
+        tags: |
+          ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:latest 
+          ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:${{ github.run_id }}
 
     - name: Docker Compose Build
       working-directory: ./docker
