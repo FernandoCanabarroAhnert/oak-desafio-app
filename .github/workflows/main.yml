@@ -33,6 +33,8 @@ jobs:
 
     - name: Docker Compose Build
       working-directory: ./docker
+      env:
+        SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}
       run: docker compose build
 
     - name: Push to Docker Hub Container Registry
