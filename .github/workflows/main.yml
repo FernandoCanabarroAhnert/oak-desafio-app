@@ -37,7 +37,7 @@ jobs:
         context: .
         dockerfile: Dockerfile
         secrets:
-          "SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}""
+          "SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}"
         push: false
         tags: |
           ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:latest 
