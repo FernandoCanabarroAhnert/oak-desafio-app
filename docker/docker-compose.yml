@@ -48,7 +48,7 @@ services:
       SPRING.DATASOURCE.URL: jdbc:postgresql://pg-docker:5432/oak_desafio
       SPRING.DATASOURCE.USERNAME: postgres
       SPRING.DATASOURCE.PASSWORD: 1234567
-      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      spring.sendgrid.api-key: ${SENDGRID_API_KEY}
     ports: 
       - 8080:8080
     depends_on:
