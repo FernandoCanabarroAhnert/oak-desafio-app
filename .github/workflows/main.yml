@@ -36,8 +36,8 @@ jobs:
       with:
         context: .
         dockerfile: Dockerfile
-        secrets: |
-          "SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}"  
+        secrets:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         push: false
         tags: |
           ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:latest 
@@ -45,7 +45,7 @@ jobs:
 
     - name: Docker Compose Build
       working-directory: ./docker
-      run: docker compose build
+      run: docker compose build --build-arg SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}
 
     - name: Push to Docker Hub Container Registry
       run: |
