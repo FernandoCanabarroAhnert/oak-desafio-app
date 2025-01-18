@@ -1,10 +1,8 @@
 package com.fernandocanabarro.oak_desafio.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,17 +23,7 @@ public class ProjectSecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    // @Bean
-    // @Order(1)
-    // public SecurityFilterChain h2SecurityFilterChain(HttpSecurity http) throws Exception {
-    //     http.securityMatcher(PathRequest.toH2Console())
-    //         .csrf(csrf -> csrf.disable())
-    //         .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
-    //     return http.build();
-    // }
-
     @Bean
-    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
         http.csrf(csrf -> csrf.csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
