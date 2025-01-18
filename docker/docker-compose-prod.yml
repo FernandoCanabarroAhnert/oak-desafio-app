@@ -1,35 +1,6 @@
 version: "3.7"
 services:
-  traefik:
-    image: traefik:latest
-    container_name: traefik
-    hostname: traefik
-    restart: always
-    ports:
-    - "80:80"
-    - "443:443"
-    command:
-    #- "--log.level=DEBUG"
-    - "--providers.docker=true"
-    - "--entryPoints.web.address=:80"
-    - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
-    - "--entryPoints.web.http.redirections.entryPoint.scheme=https"
-    - "--entryPoints.web.http.redirections.entryPoint.permanent=true"
-    - "--entrypoints.websecure.address=:443"
-    - "--providers.docker=true" 
-    - "--api.insecure=true" 
-    - "--api=true"
-    - "--providers.docker.exposedbydefault=false"
-    - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
-    - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-    - "--certificatesresolvers.letsencrypt.acme.email=admin@cloudns.com"
-    - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-    - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
-    - "--api.dashboard=true"
-    networks:
-      - dev-network
-
-  oak-desafio-app:
+   oak-desafio-app:
     image: fernandocanabarroahnert/oak-desafio-app
     restart: always
     build: 
@@ -38,16 +9,8 @@ services:
     working_dir: /app
     ports: 
       - 8080:8080
-    labels:
-      traefik.enable: true
-      traefik.http.routers.your-app.rule: Host(`oak-desafio.fernandocanabarro.ddns-ip.net`)
-      traefik.http.routers.your-app.service: oak-desafio-app
-      traefik.http.routers.your-app.entrypoints: web
-    depends_on:
-      - traefik
     networks:
       - dev-network
-
 networks:
   dev-network:
     driver: bridge
