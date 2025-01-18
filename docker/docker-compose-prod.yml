@@ -1,25 +1,5 @@
 version: "3.7"
 services:
-  oak-desafio-app:
-    image: fernandocanabarroahnert/oak-desafio-app
-    restart: always
-    build: 
-      context: ../
-      dockerfile: Dockerfile
-    working_dir: /app
-    ports: 
-      - 8080:8080
-    labels:
-    - "traefik.enable=true"
-    - "traefik.http.routers.app.entrypoints=websecure"
-    - "traefik.http.routers.task.rule=oak-desafio.fernandocanabarro.ddns-ip.net"
-    - "traefik.http.routers.task.tls.certresolver=letsencrypt"
-    - "traefik.port=5000"
-    depends_on:
-      - traefik
-    networks:
-      - dev-network
-
   traefik:
     image: traefik:latest
     container_name: traefik
@@ -48,6 +28,26 @@ services:
     - "--api.dashboard=true"
     networks:
       - dev-network
+
+  oak-desafio-app:
+    image: fernandocanabarroahnert/oak-desafio-app
+    restart: always
+    build: 
+      context: ../
+      dockerfile: Dockerfile
+    working_dir: /app
+    ports: 
+      - 8080:8080
+    labels:
+      traefik.enable: true
+      traefik.http.routers.your-app.rule: Host(`oak-desafio.fernandocanabarro.ddns-ip.net`)
+      traefik.http.routers.your-app.service: oak-desafio-app
+      traefik.http.routers.your-app.entrypoints: web
+    depends_on:
+      - traefik
+    networks:
+      - dev-network
+
 networks:
   dev-network:
     driver: bridge
