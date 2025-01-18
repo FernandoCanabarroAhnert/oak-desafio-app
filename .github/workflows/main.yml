@@ -36,6 +36,8 @@ jobs:
       with:
         context: .
         dockerfile: Dockerfile
+        secrets:
+          "SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}"
         push: false
         tags: |
           ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:latest 
@@ -43,7 +45,11 @@ jobs:
 
     - name: Docker Compose Build
       working-directory: ./docker
-      run: docker compose -f docker-compose-prod.yml build
+      run: docker compose -f docker-compose-prod.yml build \
+        --build-arg SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }} \
+        --build-arg DATABASE_URL=${{secrets.DATABASE_URL}} \
+        --build-arg DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} \
+        --build-arg DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} 
 
     - name: Push to Docker Hub Container Registry
       run: |
@@ -56,8 +62,8 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull Image from docker hub
-        run: sudo docker pull fernandocanabarroahnert/oak-desafio-app:latest
+        run: docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:latest
       - name: Delete old container
-        run: sudo docker rm -f oak-desafio-app
+        run: docker rm -f oak-desafio-app
       - name: Run docker container
-        run: sudo docker run -d -p 8080:8080 -e SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}} -e DATABASE_URL=${{secrets.DATABASE_URL}} -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} -e DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}} --name oak-desafio-app fernandocanabarroahnert/oak-desafio-app
+        run: docker run -d -p 8080:8080 --name oak-desafio-app ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app
