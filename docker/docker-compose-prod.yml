@@ -15,6 +15,8 @@ services:
     - "traefik.http.routers.task.rule=oak-desafio.fernandocanabarro.ddns-ip.net"
     - "traefik.http.routers.task.tls.certresolver=letsencrypt"
     - "traefik.port=5000"
+    depends_on:
+      - traefik
     networks:
       - dev-network
 
