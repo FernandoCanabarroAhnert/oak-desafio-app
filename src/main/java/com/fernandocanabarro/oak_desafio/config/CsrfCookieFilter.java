@@ -18,6 +18,6 @@ public class CsrfCookieFilter extends OncePerRequestFilter {
         CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
         csrfToken.getToken();
         filterChain.doFilter(request, response);
-    }
+    } /* */
 
 }
