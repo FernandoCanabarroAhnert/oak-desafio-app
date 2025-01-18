@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-   oak-desafio-app:
+  oak-desafio-app:
     image: fernandocanabarroahnert/oak-desafio-app
     restart: always
     build: 
@@ -9,6 +9,44 @@ services:
     working_dir: /app
     ports: 
       - 8080:8080
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.app.entrypoints=websecure"
+    - "traefik.http.routers.task.rule=oak-desafio.fernandocanabarro.ddns-ip.net"
+    - "traefik.http.routers.task.tls.certresolver=letsencrypt"
+    - "traefik.port=5000"
+    networks:
+      - dev-network
+
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    hostname: traefik
+    restart: always
+    ports:
+    - "80:80"
+    - "443:443"
+    command:
+    #- "--log.level=DEBUG"
+    - "--providers.docker=true"
+    - "--entryPoints.web.address=:80"
+    - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
+    - "--entryPoints.web.http.redirections.entryPoint.scheme=https"
+    - "--entryPoints.web.http.redirections.entryPoint.permanent=true"
+    - "--entrypoints.websecure.address=:443"
+    - "--providers.docker=true" 
+    - "--api.insecure=true" 
+    - "--api=true"
+    - "--providers.docker.exposedbydefault=false"
+    - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+    - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+    - "--certificatesresolvers.letsencrypt.acme.email=admin@cloudns.com"
+    - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+    - "--api.dashboard=true"
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - letsencrypt:/letsencrypt
     networks:
       - dev-network
 networks:
