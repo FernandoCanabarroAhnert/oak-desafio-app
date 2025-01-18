@@ -45,11 +45,7 @@ jobs:
 
     - name: Docker Compose Build
       working-directory: ./docker
-      run: docker compose -f docker-compose-prod.yml build \
-        --build-arg SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }} \
-        --build-arg DATABASE_URL=${{secrets.DATABASE_URL}} \
-        --build-arg DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} \
-        --build-arg DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} 
+      run: docker compose -f docker-compose-prod.yml build
 
     - name: Push to Docker Hub Container Registry
       run: |
