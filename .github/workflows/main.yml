@@ -58,8 +58,8 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull Image from docker hub
-        run: docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:latest
+        run: docker pull fernandocanabarroahnert/oak-desafio-app:latest
       - name: Delete old container
         run: docker rm -f oak-desafio-app
       - name: Run docker container
-        run: docker run -d -p 8080:8080 -e SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}} -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} -e DATABASE_PASSWORD='${{secrets.DATABASE_PASSWORD}}' -e DATABASE_URL=${{secrets.DATABASE_URL}} --name oak-desafio-app ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app
+        run: docker run -d -p 8080:8080 -e SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}} -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} -e DATABASE_PASSWORD='${{secrets.DATABASE_PASSWORD}}' -e DATABASE_URL=${{secrets.DATABASE_URL}} --name oak-desafio-app fernandocanabarroahnert/oak-desafio-app
