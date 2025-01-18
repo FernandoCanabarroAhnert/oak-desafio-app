@@ -45,11 +45,25 @@ jobs:
 
     - name: Docker Compose Build
       working-directory: ./docker
-      run: docker compose build --build-arg SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}
+      run: docker compose -f docker-compose-prod.yml build --build-arg \
+        --build-arg SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }} \
+        --build-arg DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} \
+        --build-arg DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} \
+        --build-arg DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} 
 
     - name: Push to Docker Hub Container Registry
       run: |
         docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:latest ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:${{ github.run_id }}
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:${{ github.run_id }}
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:latest
-       
+
+  deploy:
+    needs: build
+    runs-on: [aws-ec2]
+    steps:
+      - name: Pull Image from docker hub
+        run: docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app:latest
+      - name: Delete old container
+        run: docker rm -f oak-desafio-app
+      - name: Run docker container
+        run: docker run -d -p 8080:8080 --name oak-desafio-app ${{ secrets.DOCKER_HUB_USERNAME }}/oak-desafio-app
